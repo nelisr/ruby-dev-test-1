@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_06_23_195509) do
+ActiveRecord::Schema[7.0].define(version: 2023_06_24_111610) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -50,6 +50,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_06_23_195509) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["directory_id"], name: "index_archives_on_directory_id"
+    t.index ["name", "directory_id", "user_id"], name: "index_archives_on_name_and_directory_id_and_user_id", unique: true
     t.index ["name", "directory_id"], name: "index_archives_on_name_and_directory_id", unique: true
     t.index ["user_id"], name: "index_archives_on_user_id"
   end
@@ -60,6 +61,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_06_23_195509) do
     t.uuid "user_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["name", "parent_id", "user_id"], name: "index_directories_on_name_and_parent_id_and_user_id", unique: true
     t.index ["name", "parent_id"], name: "index_directories_on_name_and_parent_id", unique: true
     t.index ["parent_id"], name: "index_directories_on_parent_id"
     t.index ["user_id"], name: "index_directories_on_user_id"

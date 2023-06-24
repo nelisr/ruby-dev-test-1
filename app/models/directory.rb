@@ -13,9 +13,10 @@
 #
 # Indexes
 #
-#  index_directories_on_name_and_parent_id  (name,parent_id) UNIQUE
-#  index_directories_on_parent_id           (parent_id)
-#  index_directories_on_user_id             (user_id)
+#  index_directories_on_name_and_parent_id              (name,parent_id) UNIQUE
+#  index_directories_on_name_and_parent_id_and_user_id  (name,parent_id,user_id) UNIQUE
+#  index_directories_on_parent_id                       (parent_id)
+#  index_directories_on_user_id                         (user_id)
 #
 # Foreign Keys
 #
@@ -26,7 +27,7 @@
 class Directory < ApplicationRecord
   # Validations
   # ---
-  validates :name, presence: true, uniqueness: { scope: :parent_id }
+  validates :name, presence: true, uniqueness: { scope: [:parent_id, :user_id] }
 
   # Associations
   # ---

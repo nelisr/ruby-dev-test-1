@@ -13,9 +13,10 @@
 #
 # Indexes
 #
-#  index_archives_on_directory_id           (directory_id)
-#  index_archives_on_name_and_directory_id  (name,directory_id) UNIQUE
-#  index_archives_on_user_id                (user_id)
+#  index_archives_on_directory_id                       (directory_id)
+#  index_archives_on_name_and_directory_id              (name,directory_id) UNIQUE
+#  index_archives_on_name_and_directory_id_and_user_id  (name,directory_id,user_id) UNIQUE
+#  index_archives_on_user_id                            (user_id)
 #
 # Foreign Keys
 #
@@ -29,7 +30,7 @@ class Archive < ApplicationRecord
 
   # Validations
   # ---
-  validates :name, presence: true, uniqueness: { scope: :directory_id }
+  validates :name, presence: true, uniqueness: { scope: [:directory_id, :user_id] }
   validates :file, presence: true
 
   # Associations

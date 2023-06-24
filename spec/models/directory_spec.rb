@@ -23,6 +23,6 @@ RSpec.describe Directory, type: :model do
     subject { build :directory }
 
     it { is_expected.to validate_presence_of(:name) }
-    it { is_expected.to validate_uniqueness_of(:name).scoped_to(:parent_id) }
+    it { is_expected.to validate_uniqueness_of(:name).scoped_to([:parent_id, :user_id]) }
   end
 end

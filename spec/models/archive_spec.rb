@@ -32,7 +32,7 @@ RSpec.describe Archive, type: :model do
 
     it { is_expected.to validate_presence_of(:name) }
     it { is_expected.to validate_presence_of(:file) }
-    it { is_expected.to validate_uniqueness_of(:name).scoped_to(:directory_id) }
+    it { is_expected.to validate_uniqueness_of(:name).scoped_to([:directory_id, :user_id]) }
   end
 
   context "attachments" do
