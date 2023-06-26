@@ -36,6 +36,12 @@ gem "paper_trail", "~> 12.0"
 # Serializer
 gem "panko_serializer", "~> 0.7.9"
 
+# Multitenancy
+gem "acts_as_tenant", "~> 0.6.1"
+
+gem "rswag-api"
+gem "rswag-ui"
+
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[mri mingw x64_mingw]

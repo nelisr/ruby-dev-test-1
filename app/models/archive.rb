@@ -25,6 +25,19 @@
 #
 # ---
 class Archive < ApplicationRecord
+  # Pg_Search (Full Text Search)
+  # ---
+  include PgSearch::Model
+  pg_search_scope :fuzzy_search,
+                  against: %i[name],
+                  associated_against: {
+                    directory: %i[name]
+                  }
+
+  # Tenant
+  # ---
+  acts_as_tenant :user
+
   # Attachments
   has_one_attached :file
 
@@ -38,14 +51,15 @@ class Archive < ApplicationRecord
   belongs_to :directory
   belongs_to :user
 
-  # Delegate Attributes
-  delegate :url, to: :file
-
   # Virtual Attributes
   # ---
   def path
     return name unless directory
 
     [directory.path, name].join('/')
+  end
+
+  def url
+    Rails.application.routes.url_helpers.url_for(file) if file.attached?
   end
 end

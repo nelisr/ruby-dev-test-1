@@ -25,6 +25,19 @@
 #
 # ---
 class Directory < ApplicationRecord
+  # Pg_Search (Full Text Search)
+  # ---
+  include PgSearch::Model
+  pg_search_scope :fuzzy_search,
+                  against: %i[name],
+                  associated_against: {
+                    parent: %i[name]
+                  }
+
+  # Tenant
+  # ---
+  acts_as_tenant :user
+
   # Validations
   # ---
   validates :name, presence: true, uniqueness: { scope: [:parent_id, :user_id] }

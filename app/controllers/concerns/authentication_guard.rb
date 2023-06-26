@@ -28,37 +28,47 @@ module AuthenticationGuard
     end
   end
 
-  included do
-    include ::AuthenticationGuard::ControllerMethods
+  class UnauthorizedError < Error
+    def default_status
+      401
+    end
 
+    def default_code
+      "unauthorized"
+    end
+  end
+
+  included do
+    # Enable acts_as_tenant
+    set_current_tenant_through_filter
+
+    # Basic Auth
+    include ActionController::HttpAuthentication::Basic::ControllerMethods
+    before_action :authenticate_user!
+
+    # Custom Errors
+    include ::AuthenticationGuard::ControllerMethods
     rescue_from ::AuthenticationGuard::Error do |e|
       render status: e.status, json: { error: e.code, message: e&.message }
     end
   end
 
   module ControllerMethods
+    private
+
+    attr_reader :current_user
+
     # filters
     # ---
 
-    protected
+    def authenticate_user!
+      @current_user = authenticate_with_http_basic { |u, p| User.find_by(email: u)&.authenticate(p) }
 
-    def authenticate_user
-      doorkeeper_authorize! default_auth_scope
-    end
+      return raise ::AuthenticationGuard::UnauthorizedError.new unless @current_user
 
-    # helpers
-    # ---
+      set_current_tenant(@current_user)
 
-    private
-
-    def current_user
-      return current_resource_owner if doorkeeper_token
-
-      warden.authenticate(scope: :user)
-    end
-
-    def current_resource_owner
-      User.find(doorkeeper_token.resource_owner_id)
+      @current_user
     end
   end
 end

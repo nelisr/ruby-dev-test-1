@@ -1,11 +1,5 @@
 # frozen_string_literal: true
 
-# Concern que inclui todas as funcionalidades que ficam disponíveis no ApplicationController.
-# - controle de exceções (rescue_from)
-# - adição de dados a logs e auditoria
-#
-# Mas como precisamos estender outros controllers (ActiveStorage, por ex), extraímos para
-# um concern para poder reaproveitar em outras classes.
 module ApplicationControlling
   extend ActiveSupport::Concern
 
@@ -22,12 +16,10 @@ module ApplicationControlling
     rescue_from ActiveRecord::RecordNotDestroyed,   with: :record_invalid!
   end
 
-
   # catch-all route
   def not_found
     not_found!
   end
-
 
   private
 
@@ -44,7 +36,6 @@ module ApplicationControlling
     render status: status,
           json: { error: error, message: message }
   end
-
 
   def param_missing!(err = nil, message: nil, param: nil)
     message ||= err&.message || "parameter(s) missing"
@@ -69,40 +60,5 @@ module ApplicationControlling
 
   def subclass_not_found!
     render status: :bad_request, json: { error: "invalid", message: "invalid type" }
-  end
-
-  def sort_params
-    sort = params["sort"]
-
-    return unless sort
-
-    # Separa os parâmetros em itens de uma array através do padrão no Regex
-    #
-    # Entrada:
-    # sort = 'name,price:desc'
-    #
-    # Saída:
-    # columns = ['name', 'price:desc']
-    #
-    columns = sort.scan(/[a-z_]+:asc|[a-z_]+:desc|[a-z_]+/)
-
-    return unless columns.present?
-
-    # Cada item da array salvo anteriormente vai se tornar key:value da hash
-    #
-    # Entrada:
-    # columns = ['name', 'price:desc']
-    #
-    # Saída:
-    # columns = {"name"=>asc, "price"=>"desc"}
-    #
-    Hash[
-      columns.map do |column|
-        sort_attr, sort_dir = column.split(":", 2)
-        sort_dir ||= "asc"
-
-        [sort_attr, sort_dir]
-      end
-    ]
   end
 end

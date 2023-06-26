@@ -38,8 +38,4 @@ RSpec.describe Archive, type: :model do
   context "attachments" do
     it { is_expected.to have_one_attached(:file) }
   end
-
-  context "delegates" do
-    it { is_expected.to delegate_method(:url).to(:file) }
-  end
 end

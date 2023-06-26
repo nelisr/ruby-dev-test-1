@@ -37,7 +37,7 @@ docker compose run --rm backend bin/setup
 docker compose run --rm backend bin/rails db:create RAILS_ENV=test
 
 # - seeding
-docker compose run --rm backend bin/rails db:seed
+# docker compose run --rm backend bin/rails db:seed
 
 docker compose down
 

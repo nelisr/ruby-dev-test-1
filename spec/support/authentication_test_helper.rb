@@ -2,24 +2,25 @@
 
 module AuthenticationTestHelper
   module Methods
-    def authenticate_with_access_token!(resource: nil, scopes: :api_mobile)
-      user        = resource || create(:user)
-      application = create(:application, scopes: scopes)
-      token       = instance_double("Doorkeeper::AccessToken", acceptable?: true, scopes: scopes, resource_owner_id: user.id)
+    def basic_authentication!(user: nil)
+      @current_user = user || create(:user)
 
-      allow_any_instance_of(described_class).to receive(:authenticate_user!)
+      allow_any_instance_of(described_class).to receive(:authenticate_user!).and_return(@current_user)
 
-      allow_any_instance_of(described_class).to receive(:doorkeeper_token).and_return(token)
+      ActsAsTenant.current_tenant = @current_user
+      ActsAsTenant.test_tenant = @current_user
     end
 
     def reset_authentication!
       # removendo stubs, com "#and_call_original"
       %i[
         authenticate_user!
-        doorkeeper_token
       ].each do |method_name|
         allow_any_instance_of(described_class).to receive(method_name).and_call_original
       end
+
+      ActsAsTenant.current_tenant = nil
+      ActsAsTenant.test_tenant = nil
     end
   end
 end

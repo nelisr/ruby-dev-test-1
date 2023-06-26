@@ -2,7 +2,7 @@ FactoryBot.define do
   factory :archive do
     sequence(:name) {|n| "archive_#{n}"}
     directory
-    user
+    association :user
 
     after :build do |archive|
       archive.file.attach(
